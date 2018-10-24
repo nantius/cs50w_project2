@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Socket Chat</title>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='socket.js') }}"></script>
+
+</head>
+<body>
+    <div id="user_name"></div>
+
+    <p>OIOI </p>
+
+    <form method="post" action="{{ url_for("add_channel") }}" >
+        <input name="channel_name" type="text" id="channel_name" />
+        <button id="add_channel">ADD CHANNEL</button>
+    </form>
+
+    <br/>
+
+    <div id="channels">
+        <ul>
+        {% for channel in channels %}
+            <li><a href="{{ url_for("channel", name=channel) }}" > {{ channel}} </a></li>
+        {% endfor %}
+        </ul>
+    </div>
+
+    <div id="current_channel">
+        <div id="channel_title"></div>
+        <div id="channel_messages"></div>
+    </div>
+
+</body>
+</html>
