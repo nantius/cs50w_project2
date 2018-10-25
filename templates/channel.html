@@ -7,12 +7,22 @@
     <script src="{{ url_for('static', filename='socket.js') }}"></script>
 </head>
 <body>
-    <h1>{{ channel["name"] }}</h1>
+    <h1 data-name="{{ channel["name"]  }}" id="channel_header">{{ channel["name"] }}</h1>
+    <div id="user_name"></div>
 
     <br>
 
     <input name="message" type="text" id="message" />
-    <button id="submit_message">add message</button>
+    <button id="add_message">add message</button>
+
+
+    <br>
+
+    <div id="messages">
+        {% for message in channel["messages"] %}
+            <li>{{ message["message"] }} by {{ message["user"] }} at {{ message["time"] }}</li>
+        {% endfor %}
+    </div>
 
 </body>
 </html>

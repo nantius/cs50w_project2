@@ -12,7 +12,6 @@ channels = {}
 
 @app.route("/")
 def index():
-    print(channels)
     return render_template("index.html", channels=channels)
 
 @app.route("/channels/<string:name>")
@@ -22,7 +21,9 @@ def channel(name):
     if name not in channels:
         return abort(404)
 
-    return render_template("channel.html", channel=channels[name])
+    channel = channels[name]
+
+    return render_template("channel.html", channel=channel)
 
 
 @app.route("/channels", methods=["POST"])
@@ -39,5 +40,15 @@ def add_channel():
 
         return redirect(url_for("index"))
 
-    # # broadcasts change to channel list
-    # emit("channel created", {"channel_name": channel}, broadcast=True)
+
+@socketio.on("add message")
+def add_message(data):
+
+    # Adding message to channel
+    channel = data["channel"]
+    message = data["message"]
+    channels[channel]["messages"].append(message)
+
+    # Broadcasting message created to all connected to socket
+    emit("message created", {"message": message}, broadcast=True)
+

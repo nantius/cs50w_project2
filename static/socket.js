@@ -1,44 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --------------- ADD CHANNEL ---------------------
-
-    if(window.location.href === "http://127.0.0.1:5000/"){
-        // By default, submit button is disabled
-        document.querySelector('#add_channel').disabled = true;
-
-        // Enable button only if there is text in the input field
-        document.querySelector('#channel_name').onkeyup = () => {
-        if (document.querySelector('#channel_name').value.length > 0)
-            document.querySelector('#add_channel').disabled = false;
-        else
-            document.querySelector('#add_channel').disabled = true;
-        };
-    }
-
-    // --------------- SOCKET IO -------------------------
-
-    if(window.location.href !== "http://127.0.0.1:5000/"){
-
-        // Connect to websocket
-        var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
-
-        // Adding event to the new channel button as soon as socket connects
-        socket.on('connect', () => {
-            document.querySelector('#add_channel').onclick = () => {
-                const channel_name = document.querySelector('#channel_name').value;
-                socket.emit('add message', {'message': channel_name});
-            };
-        });
-
-        // When a new channel is created, add to the unordered list
-        socket.on('channel created', data => {
-            const li = document.createElement('li');
-            li.innerHTML = data.channel_name;
-            document.querySelector('#channels').append(li);
-        });
-
-    }
-
     // --------------------- USER NAME ----------------------
 
     // Verifying user's storage for username
@@ -58,5 +19,71 @@ document.addEventListener('DOMContentLoaded', () => {
     const name = document.createElement('p');
     name.innerHTML = localStorage.getItem('name');
     document.querySelector('#user_name').append(name);
+
+    // --------------- ADD CHANNEL ---------------------
+
+    if(window.location.href === "http://127.0.0.1:5000/"){
+        // By default, submit button is disabled
+        document.querySelector('#add_channel').disabled = true;
+
+        // Enable button only if there is text in the input field
+        document.querySelector('#channel_name').onkeyup = () => {
+        if (document.querySelector('#channel_name').value.length > 0)
+            document.querySelector('#add_channel').disabled = false;
+        else
+            document.querySelector('#add_channel').disabled = true;
+        };
+    }
+
+    // --------------- ADD MESSAGE ---------------------
+
+    if(window.location.href !== "http://127.0.0.1:5000/"){
+        // By default, submit button is disabled
+        document.querySelector('#add_message').disabled = true;
+
+        // Enable button only if there is text in the input field
+        document.querySelector('#message').onkeyup = () => {
+        if (document.querySelector('#message').value.length > 0)
+            document.querySelector('#add_message').disabled = false;
+        else
+            document.querySelector('#add_message').disabled = true;
+        };
+    }
+
+    // --------------- SOCKET IO -------------------------
+
+    if(window.location.href !== "http://127.0.0.1:5000/"){
+
+        // Connect to websocket
+        var socket = io.connect("http://127.0.0.1:5000");
+
+        // Adding event to the new channel button as soon as socket connects
+        socket.on('connect', () => {
+            document.querySelector('#add_message').onclick = () => {
+
+                // Creating the message object to send to server
+                const user_message = document.querySelector('#message').value;
+
+                const name = localStorage.getItem('name');
+
+                const time = new Date();
+                const time_string = time.getHours() + ':' + time.getMinutes() + ' - ' + time.getDay() + '/' + time.getMonth();
+
+                const message = {'message': user_message, 'time': time_string, 'user': name};
+
+                const channel_header = document.querySelector('#channel_header').getAttribute('data-name');
+
+                socket.emit('add message', {'message': message, 'channel': channel_header});
+            };
+        });
+
+        // When a new message is created, add to the unordered list
+        socket.on('message created', data => {
+            const li = document.createElement('li');
+            li.innerHTML = data.message.message + ' by ' + data.message.user + ' at ' + data.message.time;
+            document.querySelector('#messages').append(li);
+        });
+
+    }
 
 });
