@@ -8,10 +8,11 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 socketio = SocketIO(app)
 
 # Channels stored in memory
-channels = []
+channels = {}
 
 @app.route("/")
 def index():
+    print(channels)
     return render_template("index.html", channels=channels)
 
 @app.route("/channels/<string:name>")
@@ -21,7 +22,7 @@ def channel(name):
     if name not in channels:
         return abort(404)
 
-    return render_template("channel.html", channel=name)
+    return render_template("channel.html", channel=channels[name])
 
 
 @app.route("/channels", methods=["POST"])
@@ -33,13 +34,8 @@ def add_channel():
         except ValueError:
             print(ValueError)
 
-        # Criando o dicionário do canal
-        channel_dict = dict()
-        channel_dict[channel] = {"name": channel, "messages":[]}
-
-
-        # adds to list of channels
-        channels.append(channel_dict)
+        # Adding new channel to list
+        channels[channel] = {"name": channel, "messages": []}
 
         return redirect(url_for("index"))
 
