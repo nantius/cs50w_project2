@@ -5,8 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Verifying user's storage for username
     if (!localStorage.getItem('name')){
         // if no username is found and the user is trying to access some other page, then redirect him to main page
-        if(window.location.href !== "http://127.0.0.1:5000/"){
-            window.location.href = "http://127.0.0.1:5000/";
+        if(window.location.pathname !== "/"){
+            window.location.pathname = "/";
         } else {
             // Query user for username
             const username = prompt("Insert your username");
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --------------- ADD CHANNEL ---------------------
 
-    if(window.location.href === "http://127.0.0.1:5000/"){
+    if(window.location.pathname === "/"){
         // By default, submit button is disabled
         document.querySelector('#add_channel').disabled = true;
 
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --------------- ADD MESSAGE ---------------------
 
-    if(window.location.href !== "http://127.0.0.1:5000/"){
+    if(window.location.pathname !== "/"){
         // By default, submit button is disabled
         document.querySelector('#add_message').disabled = true;
 
@@ -52,10 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --------------- SOCKET IO -------------------------
 
-    if(window.location.href !== "http://127.0.0.1:5000/"){
+    if(window.location.pathname !== "/"){
 
         // Connect to websocket
-        var socket = io.connect("http://127.0.0.1:5000");
+        var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
         // Adding event to the new channel button as soon as socket connects
         socket.on('connect', () => {
