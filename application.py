@@ -51,3 +51,7 @@ def add_message(data):
     # Broadcasting message created to all connected to socket
     emit("message created", {"message": message}, broadcast=True)
 
+
+
+if __name__ == "__main__":
+    app.run()
