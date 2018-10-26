@@ -1,5 +1,4 @@
 import os
-
 from flask import Flask, render_template, abort, request, redirect, url_for
 from flask_socketio import SocketIO, emit
 
